@@ -1,6 +1,5 @@
 package pages.android;
 
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -11,37 +10,34 @@ import java.time.Duration;
 
 public class Homepage {
 
-    public Homepage(){
-        PageFactory.initElements(new AppiumFieldDecorator(Driver.getAppiumDriver(), Duration.ofSeconds(10)) ,this);
+    public Homepage() {
+        PageFactory.initElements(new AppiumFieldDecorator(Driver.getAppiumDriver(), Duration.ofSeconds(10)), this);
     }
 
     @FindBy(id = "trendyol.com:id/buttonSelectGenderMan")
-    public MobileElement cinsiyetSecimi;
+    public WebElement cinsiyetSecimi;
 
     @FindBy(xpath = "//android.widget.FrameLayout[@content-desc='Hesabım']")
-    public MobileElement hesabimTab;
+    public WebElement hesabimTab;
 
     @FindBy(id = "trendyol.com:id/editTextEmail")
-    public MobileElement emailTextbox;
+    public WebElement emailTextbox;
 
     @FindBy(id = "trendyol.com:id/editTextPassword")
-    public MobileElement passwordTextbox;
-
+    public WebElement passwordTextbox;
 
     @FindBy(id = "trendyol.com:id/buttonLogin")
-    public MobileElement girisYapButton;
-
+    public WebElement girisYapButton;
 
     @FindBy(id = "com.google.android.gms:id/cancel")
-    public MobileElement cancelEmailSelectButton;
+    public WebElement cancelEmailSelectButton;
 
     @FindBy(className = "android.view.ViewGroup")
-    public MobileElement touchScreen;
+    public WebElement touchScreen;
 
     @FindBy(id = "trendyol.com:id/textViewWelcoming")
-    public MobileElement nameSurnameText;
-
+    public WebElement nameSurnameText;
 
     @FindBy(id = "trendyol.com:id/snackbar_text")
-    public MobileElement hataliLogin;
+    public WebElement hataliLogin;
 }

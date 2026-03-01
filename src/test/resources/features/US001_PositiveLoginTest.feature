@@ -1,13 +1,13 @@
 @smoke @us01
-Feature: US1001 Positive login testi
+Feature: US1001 Positive login test
   @tc01
-  Scenario: TC01 Email ile Positive Login Testi
-    Given kullanici trendyol uygulamasını acar
-    And kullanici hesabım tab ina tiklar
-    Then kullanici mail olarak "ValidEmail" girer
-    And kullanici password olarak "ValidPassword" girer
-    And kullanici giris yap butonuna tiklar
-    And kullanicinin basarili olarak giris yaptıgı test edilir
-    And kullanici uygulamayi kapatir
+  Scenario: TC01 Positive Login Test with Email
+    Given user opens the trendyol application
+    And user clicks on the my account tab
+    Then user enters "ValidEmail" as email
+    And user enters "ValidPassword" as password
+    And user clicks on the login button
+    And it is verified that the user has successfully logged in
+    And user closes the application
 
 

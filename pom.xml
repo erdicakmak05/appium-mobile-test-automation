@@ -5,56 +5,49 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>Gittigidiyor-Mobile-Test-Appium</artifactId>
+    <artifactId>appium-mobile-test-automation</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
     <dependencies>
-
-        <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-java -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>7.2.3</version>
+            <version>7.20.1</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-junit
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit</artifactId>
-            <version>7.2.3</version>
-            <scope>test</scope>
-        </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-testng -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-testng</artifactId>
-            <version>7.2.3</version>
+            <version>7.20.1</version>
         </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>7.20.1</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>3.141.59</version>
+            <version>4.27.0</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/io.appium/java-client -->
         <dependency>
             <groupId>io.appium</groupId>
             <artifactId>java-client</artifactId>
-            <version>7.5.1</version>
+            <version>9.3.0</version>
         </dependency>
-
         <dependency>
-            <groupId>com.github.saikrishna321</groupId>
-            <artifactId>AppiumTestDistribution</artifactId>
-            <version>12.0.3</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.24.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.24.3</version>
         </dependency>
     </dependencies>
     <build>
@@ -62,50 +55,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
-            </plugin>
-            <plugin>
-                <groupId>com.github.temyers</groupId>
-                <artifactId>cucumber-jvm-parallel-plugin</artifactId>
-                <version>4.2.0</version>
-                <executions>
-                    <execution>
-                        <id>generateRunners</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>generateRunners</goal>
-                        </goals>
-                        <configuration>
-                            <!-- outputDirectory should always point to src/test/java/output -->
-                            <outputDirectory>src/test/java</outputDirectory>
-                            <!-- -->
-                            <glue>com.appium.steps</glue>
-                            <featuresDirectory>src/test/resources/features</featuresDirectory>
-                            <cucumberOutputDir>target</cucumberOutputDir>
-                            <tags>
-                                <tag>@login</tag>
-                            </tags>
-                            <namingScheme>simple</namingScheme>
-                            <!-- The class naming pattern to use.  Only required/used if naming scheme is 'pattern'.-->
-                            <namingPattern>Parallel{c}IT</namingPattern>
-                            <parallelScheme>SCENARIO</parallelScheme>
-                            <packageName>output</packageName>
-                            <useTestNG>true</useTestNG>
-                            <plugins>
-                                <plugin>
-                                    <name>com.cucumber.listener.CucumberListener</name>
-                                </plugin>
-                            </plugins>
-                        </configuration>
-                    </execution>
-                </executions>
+                <version>3.5.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>

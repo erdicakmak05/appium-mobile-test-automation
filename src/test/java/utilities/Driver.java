@@ -1,67 +1,87 @@
 package utilities;
 
-
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import io.appium.java_client.ios.options.XCUITestOptions;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-
 
 public class Driver {
 
-    private static AppiumDriver<MobileElement> appiumDriver;
-
-    public static AppiumDriver getAppiumDriver()  {
-        URL appiumServerURL = null;
-        try {
-            appiumServerURL = new URL("http:127.0.0.1:4723/wd/hub");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        if (appiumDriver == null) {
-            DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-            desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, ConfigReader.getProperty("automationName"));
-            desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, ConfigReader.getProperty("platformName"));
-            desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, ConfigReader.getProperty("platformVersion"));
-            desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, ConfigReader.getProperty("deviceName"));
-            desiredCapabilities.setCapability(MobileCapabilityType.APP, ConfigReader.getProperty("appPath"));
-            System.out.println(ConfigReader.getProperty("appPath"));
-            desiredCapabilities.setCapability(MobileCapabilityType.NO_RESET, false);
-            desiredCapabilities.setCapability("autoAcceptAlert",true);
-            desiredCapabilities.setCapability("autoGrantPermissions", "true");
-
-            if (ConfigReader.getProperty("platformName").equals("android")) {
-                //if you do not provide app path so you should provide "appPackage" and "appActivity"
-                //desiredCapabilities.setCapability("appPackage","com.gittigidiyormobil");
-                //desiredCapabilities.setCapability("appActivity","com.gittigidiyormobil.view.GGMainActivity");
-                appiumDriver = new AndroidDriver(appiumServerURL,desiredCapabilities);
-                appiumDriver.manage().timeouts().implicitlyWait(25,TimeUnit.SECONDS);
-            } else if (ConfigReader.getProperty("platformName").equals("ios")) {
-                //if you do not provide app path so you should use "bundleId"
-                desiredCapabilities.setCapability("bundleId",ConfigReader.getProperty("iosBundleId"));
-                appiumDriver = new IOSDriver(appiumServerURL,desiredCapabilities);
-                appiumDriver.manage().timeouts().implicitlyWait(25,TimeUnit.SECONDS);
-            } else {
-                throw new UnsupportedOperationException("Invalid Platform Name " + ConfigReader.getProperty("platformName"));
-            }
-        }
-        return appiumDriver;
+    private Driver() {
     }
 
+    private static final ThreadLocal<AndroidDriver> androidDriverPool = new ThreadLocal<>();
+    private static final ThreadLocal<IOSDriver> iosDriverPool = new ThreadLocal<>();
+    private static final Logger logger = LogManager.getLogger(Driver.class);
 
-    public static void quitAppiumDriver(){
-        if (appiumDriver != null) {
-            appiumDriver.quit();
-            appiumDriver = null;
+    public static AndroidDriver getAppiumDriver() {
+        if (androidDriverPool.get() == null) {
+            String serverUrl = System.getenv("APPIUM_URL") != null
+                    ? System.getenv("APPIUM_URL")
+                    : "http://127.0.0.1:4723";
+            URL appiumServerURL;
+            try {
+                appiumServerURL = new URL(serverUrl);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Invalid Appium server URL: " + serverUrl, e);
+            }
+
+            UiAutomator2Options options = new UiAutomator2Options()
+                    .setAutomationName(ConfigReader.getProperty("automationName"))
+                    .setPlatformName(ConfigReader.getProperty("platformName"))
+                    .setPlatformVersion(ConfigReader.getProperty("platformVersion"))
+                    .setDeviceName(ConfigReader.getProperty("deviceName"))
+                    .setApp(ConfigReader.getProperty("appPath"))
+                    .setNoReset(false)
+                    .setAutoGrantPermissions(true);
+
+            androidDriverPool.set(new AndroidDriver(appiumServerURL, options));
+            androidDriverPool.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(25));
+            logger.info("Android driver started on: {}", serverUrl);
+        }
+        return androidDriverPool.get();
+    }
+
+    public static IOSDriver getIOSDriver() {
+        if (iosDriverPool.get() == null) {
+            String serverUrl = System.getenv("APPIUM_URL") != null
+                    ? System.getenv("APPIUM_URL")
+                    : "http://127.0.0.1:4723";
+            URL appiumServerURL;
+            try {
+                appiumServerURL = new URL(serverUrl);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException("Invalid Appium server URL: " + serverUrl, e);
+            }
+
+            XCUITestOptions options = new XCUITestOptions()
+                    .setPlatformName(ConfigReader.getProperty("platformName"))
+                    .setDeviceName(ConfigReader.getProperty("deviceName"))
+                    .setBundleId(ConfigReader.getProperty("iosBundleId"));
+
+            iosDriverPool.set(new IOSDriver(appiumServerURL, options));
+            iosDriverPool.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(25));
+            logger.info("iOS driver started on: {}", serverUrl);
+        }
+        return iosDriverPool.get();
+    }
+
+    public static void quitAppiumDriver() {
+        if (androidDriverPool.get() != null) {
+            androidDriverPool.get().quit();
+            androidDriverPool.remove();
+            logger.info("Android driver closed");
+        }
+        if (iosDriverPool.get() != null) {
+            iosDriverPool.get().quit();
+            iosDriverPool.remove();
+            logger.info("iOS driver closed");
         }
     }
 }
